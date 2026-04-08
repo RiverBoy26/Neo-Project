@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="stats-grid">
+    {% for item in metrics %}
+    <article class="card stat-card">
+        <span>{{ item.label }}</span>
+        <strong>{{ item.value }}</strong>
+    </article>
+    {% endfor %}
+</section>
+<section class="content-grid two-columns">
+    <article class="card">
+        <h2>Сводка по системе</h2>
+        <p>Здесь могут быть графики по загрузке, среднему времени закрытия ролей и качеству выполнения проектов.</p>
+    </article>
+    <article class="card">
+        <h2>Отчеты</h2>
+        <ul class="clean-list">
+            <li>Отчет по проекту</li>
+            <li>Отчет по специалистам</li>
+            <li>Отчет по качеству и фидбеку</li>
+        </ul>
+    </article>
+</section>
+{% endblock %}

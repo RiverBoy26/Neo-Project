@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content-grid three-columns compact-gap">
+    {% for item in recommendations %}
+    <article class="card recommendation-card">
+        <span class="score-pill">{{ item.score }}</span>
+        <h2>{{ item.name }}</h2>
+        <p>{{ item.reason }}</p>
+        <div class="action-row stacked-actions">
+            <button class="btn-primary" type="button">Назначить</button>
+            <button class="btn-secondary" type="button">Подробнее</button>
+        </div>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card form-card">
+    <h2>Добавить роль</h2>
+    <form class="form-grid two-col-form">
+        <label><span>Роль</span><input type="text" placeholder="Frontend Developer"></label>
+        <label><span>Количество специалистов</span><input type="number" value="1"></label>
+        <label class="full-width"><span>Обязательные навыки</span><input type="text" placeholder="React, TypeScript, CSS"></label>
+        <label class="full-width"><span>Желательные навыки</span><input type="text" placeholder="Next.js, Figma"></label>
+        <div class="full-width"><button type="button" class="btn-primary">Добавить роль</button></div>
+    </form>
+</section>
+<section class="table-card card">
+    <h2>Роли проекта</h2>
+    <table>
+        <thead><tr><th>Роль</th><th>Количество</th><th>Ключевые навыки</th><th>Статус</th><th></th></tr></thead>
+        <tbody>
+            {% for role in roles %}
+            <tr>
+                <td>{{ role.title }}</td>
+                <td>{{ role.count }}</td>
+                <td>{{ role.must_have }}</td>
+                <td>{{ role.status }}</td>
+                <td><a href="{% url 'app:recommendations' forloop.counter %}">Подбор</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

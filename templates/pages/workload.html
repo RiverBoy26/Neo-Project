@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="table-card card">
+    <h2>Загрузка специалистов</h2>
+    <table>
+        <thead><tr><th>Специалист</th><th>Текущая загрузка</th><th>Свободен с</th><th>Комментарий</th></tr></thead>
+        <tbody>
+            {% for item in workload %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.current }}</td>
+                <td>{{ item.free_from }}</td>
+                <td>Данные для планирования новых назначений</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

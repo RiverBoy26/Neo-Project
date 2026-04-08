@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card form-card">
+    <h2>Форма редактирования специалиста</h2>
+    <form class="form-grid two-col-form">
+        <label><span>ФИО</span><input type="text" value="Анна Смирнова"></label>
+        <label><span>Роль</span><select><option>Frontend Developer</option></select></label>
+        <label><span>Уровень</span><select><option>Middle+</option></select></label>
+        <label><span>Опыт, лет</span><input type="number" value="4"></label>
+        <label class="full-width"><span>Навыки</span><input type="text" value="React, TypeScript, CSS, Figma"></label>
+        <label><span>Доступен с</span><input type="date"></label>
+        <label><span>Макс. загрузка, %</span><input type="number" value="100"></label>
+        <label class="full-width"><span>Предпочтения</span><textarea rows="4">Frontend, продуктовые команды, удалёнка</textarea></label>
+        <div class="full-width action-row">
+            <button type="button" class="btn-primary">Сохранить</button>
+            <button type="button" class="btn-secondary">Отмена</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

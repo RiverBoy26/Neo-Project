@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content-grid two-columns">
+    <article class="card">
+        <h2>{{ project.name }}</h2>
+        <p><strong>Статус:</strong> {{ project.status }}</p>
+        <p><strong>Менеджер:</strong> {{ project.manager }}</p>
+        <p><strong>Бюджет:</strong> {{ project.budget }}</p>
+        <p><strong>Период:</strong> {{ project.period }}</p>
+        <div class="action-row">
+            <a class="btn-primary" href="{% url 'app:project_edit' project.id %}">Редактировать</a>
+            <a class="btn-secondary" href="{% url 'app:project_roles' project.id %}">Роли проекта</a>
+        </div>
+    </article>
+    <article class="card">
+        <h2>Команда</h2>
+        <ul class="clean-list">
+            {% for member in project.team %}<li>{{ member }}</li>{% endfor %}
+        </ul>
+    </article>
+</section>
+{% endblock %}

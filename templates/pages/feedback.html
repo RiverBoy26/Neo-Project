@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content-grid two-columns compact-gap">
+    {% for item in feedback_items %}
+    <article class="card">
+        <span class="status-badge">{{ item.rating }}</span>
+        <h2>{{ item.target }}</h2>
+        <p><strong>Автор:</strong> {{ item.author }}</p>
+        <p>{{ item.comment }}</p>
+    </article>
+    {% endfor %}
+</section>
+<section class="card form-card">
+    <h2>Добавить отзыв</h2>
+    <form class="form-grid two-col-form">
+        <label><span>О ком отзыв</span><input type="text"></label>
+        <label><span>Оценка</span><select><option>5</option></select></label>
+        <label class="full-width"><span>Комментарий</span><textarea rows="4"></textarea></label>
+        <div class="full-width"><button type="button" class="btn-primary">Сохранить отзыв</button></div>
+    </form>
+</section>
+{% endblock %}

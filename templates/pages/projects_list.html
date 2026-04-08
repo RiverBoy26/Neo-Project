@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content-grid two-columns compact-gap">
+    {% for project in projects %}
+    <article class="card project-card">
+        <div class="card-topline"><span class="status-badge">{{ project.status }}</span></div>
+        <h2>{{ project.name }}</h2>
+        <p><strong>Менеджер:</strong> {{ project.manager }}</p>
+        <p><strong>Сроки:</strong> {{ project.dates }}</p>
+        <a class="btn-secondary" href="{% url 'app:project_detail' forloop.counter %}">Подробнее</a>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

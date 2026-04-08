@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="stats-grid">
+    {% for item in stats %}
+    <article class="card stat-card">
+        <span>{{ item.label }}</span>
+        <strong>{{ item.value }}</strong>
+    </article>
+    {% endfor %}
+</section>
+<section class="content-grid two-columns">
+    <article class="card">
+        <h2>Быстрые действия</h2>
+        <div class="action-row">
+            <a class="btn-primary" href="{% url 'app:project_create' %}">Создать проект</a>
+            <a class="btn-secondary" href="{% url 'app:specialists_list' %}">Подобрать специалистов</a>
+        </div>
+    </article>
+    <article class="card">
+        <h2>Ключевые направления</h2>
+        <ul class="clean-list">
+            <li>Умный матчинг по навыкам и загрузке</li>
+            <li>Контроль статусов назначений</li>
+            <li>Аналитика по проектам и качеству</li>
+        </ul>
+    </article>
+</section>
+{% endblock %}

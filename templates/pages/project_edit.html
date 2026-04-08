@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card form-card">
+    <h2>{{ page_title }}</h2>
+    <form class="form-grid two-col-form">
+        <label><span>Название проекта</span><input type="text" value="Neo Staffing Platform"></label>
+        <label><span>Менеджер</span><input type="text" value="Егор Ковалёв"></label>
+        <label><span>Дата начала</span><input type="date"></label>
+        <label><span>Дата окончания</span><input type="date"></label>
+        <label><span>Бюджет</span><input type="text" value="4 500 000 ₽"></label>
+        <label><span>Статус</span><select><option>В работе</option></select></label>
+        <label class="full-width"><span>Описание</span><textarea rows="5">Платформа для управления распределением специалистов по проектам.</textarea></label>
+        <label class="full-width"><span>Ожидаемый результат</span><textarea rows="4">Рабочая система с модулем рекомендаций и аналитикой.</textarea></label>
+        <div class="full-width action-row">
+            <button type="button" class="btn-primary">Сохранить</button>
+            <button type="button" class="btn-secondary">Черновик</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
