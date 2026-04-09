@@ -23,6 +23,7 @@ from db.models import (
     QualityLevel
 )
 
+from db.services.recommendations import recommend_specialists_for_requirement
 
 ROLE_LABELS = {
     Role.ADMIN: "Администратор",
@@ -444,22 +445,46 @@ def project_roles_view(request, pk):
 
 
 def recommendations_view(request, role_id):
-    requirement = get_object_or_404(ProjectRequirement.objects.select_related("project").prefetch_related("required_skills", "desired_skills"), pk=role_id)
+    requirement = get_object_or_404(
+        ProjectRequirement.objects.select_related("project").prefetch_related(
+            "required_skills",
+            "desired_skills",
+        ),
+        pk=role_id,
+    )
     project = requirement.project
-
-    required = set(requirement.required_skills.values_list("skill", flat=True))
-    desired = set(requirement.desired_skills.values_list("skill", flat=True))
 
     if request.method == "POST":
         specialist_id = request.POST.get("specialist_id")
-        profile = get_object_or_404(SpecialistProfile.objects.select_related("user"), pk=specialist_id)
-        skills = set(profile.user.user_skills.values_list("skill", flat=True))
-        score = 0
-        if required:
-            score += round(100 * len(required & skills) / len(required), 2)
-        if desired:
-            score = min(100, score + round(20 * len(desired & skills) / len(desired), 2))
-        actor = _current_user(request) or User.objects.filter(role=Role.ADMIN).first() or User.objects.filter(role=Role.PROJECT_MANAGER).first() or profile.user
+
+        # В recommendations.py используется user_id, а не pk профиля
+        profile = get_object_or_404(
+            SpecialistProfile.objects.select_related("user"),
+            user_id=specialist_id,
+        )
+
+        # Получаем актуальные рекомендации, чтобы взять метрики выбранного кандидата
+        raw_recommendations = recommend_specialists_for_requirement(requirement, limit=1000)
+        recommendation_map = {
+            item["user_id"]: item
+            for item in raw_recommendations
+            if isinstance(item, dict)
+        }
+        rec = recommendation_map.get(profile.user_id)
+
+        # skill_match_percent лучше хранить как процент покрытия required skills,
+        # потому что total_score из recommendations.py не является процентом
+        skill_match_percent = 0
+        if rec:
+            skill_match_percent = round(rec.get("required_skill_coverage", 0) * 100, 2)
+
+        actor = (
+            _current_user(request)
+            or User.objects.filter(role=Role.ADMIN).first()
+            or User.objects.filter(role=Role.PROJECT_MANAGER).first()
+            or profile.user
+        )
+
         ProjectAssignment.objects.create(
             project=project,
             user=profile.user,
@@ -468,36 +493,60 @@ def recommendations_view(request, role_id):
             start_date=project.start_date,
             end_date=project.end_date,
             assigned_by=actor,
-            skill_match_percent=score,
+            skill_match_percent=skill_match_percent,
         )
+
         profile.is_busy = True
         profile.busy_until = project.end_date or project.start_date
         profile.save(update_fields=["is_busy", "busy_until"])
-        messages.success(request, f"Специалист {_full_name(profile.user)} назначен на проект.")
+
+        messages.success(
+            request,
+            f"Специалист {_full_name(profile.user)} назначен на проект.",
+        )
         return redirect("app:assignments")
 
+    raw_recommendations = recommend_specialists_for_requirement(requirement, limit=10)
+
     recommendations = []
-    for profile in SpecialistProfile.objects.select_related("user").prefetch_related("user__user_skills").all():
-        skills = set(profile.user.user_skills.values_list("skill", flat=True))
-        matched = required & skills
-        desired_matched = desired & skills
-        score = 0
-        if required:
-            score += round(100 * len(matched) / len(required))
-        if desired:
-            score = min(100, score + round(20 * len(desired_matched) / len(desired)))
-        if profile.is_busy:
-            score = max(0, score - 20)
+    for item in raw_recommendations:
+        # защита на случай, если fallback-ветка в recommendations.py
+        # все еще возвращает числа, а не словари
+        if not isinstance(item, dict):
+            continue
+
+        required_matches = item.get("required_skill_matches", 0)
+        required_total = item.get("required_skill_total", 0)
+        desired_matches = item.get("desired_skill_matches", 0)
+        desired_total = item.get("desired_skill_total", 0)
+
+        mode_label = "Идеальный кандидат" if item.get("mode") == "ideal" else "Резервный кандидат"
+
+        reason_parts = [
+            mode_label,
+            f"Профессия: {item.get('profession', '—')}",
+            f"Уровень: {item.get('level', '—')}",
+            f"Опыт: {item.get('experience_years', 0)} лет",
+            f"Обязательные навыки: {required_matches}/{required_total}",
+        ]
+
+        if desired_total:
+            reason_parts.append(f"Желательные навыки: {desired_matches}/{desired_total}")
+
+        if item.get("is_exact_profession"):
+            reason_parts.append("Точное совпадение по профессии")
+
         recommendations.append(
             {
-                "id": profile.user_id,
-                "name": _full_name(profile.user),
-                "score": f"{score}%",
-                "reason": ", ".join(list(matched) + list(desired_matched)) or "Подходит по базовым параметрам",
-                "end_date": profile.busy_until or "сейчас свободен",
+                "id": item["user_id"],  # в POST теперь тоже передаем user_id
+                "name": item["full_name"],
+                "score": f"{round(item.get('required_skill_coverage', 0) * 100)}%",
+                "reason": ", ".join(reason_parts),
+                "end_date": "сейчас свободен",
+                "total_score": round(item.get("total_score", 0), 2),
             }
         )
-    recommendations.sort(key=lambda item: int(item["score"].replace("%", "")), reverse=True)
+
     return _page(
         request,
         "pages/recommendations.html",

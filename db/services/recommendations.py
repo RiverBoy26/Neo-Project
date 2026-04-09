@@ -170,17 +170,7 @@ def get_busy_user_ids(requirement: ProjectRequirement) -> set[int]:
     return set(qs.values_list("user_id", flat=True))
 
 
-def recommend_specialists_for_requirement(requirement_id: int, limit: int = 10) -> list[dict[str, Any]]:
-    requirement = (
-        ProjectRequirement.objects
-        .select_related("project")
-        .prefetch_related(
-            "required_skills",
-            "desired_skills",
-        )
-        .get(pk=requirement_id)
-    )
-
+def recommend_specialists_for_requirement(requirement: ProjectRequirement, limit: int = 10) -> list[dict[str, Any]]:
     required_skills = set(
         requirement.required_skills.values_list("skill", flat=True)
     )
