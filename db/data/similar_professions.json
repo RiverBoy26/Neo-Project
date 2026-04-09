@@ -1,0 +1,24 @@
+{
+  "product_manager": ["release_manager"],
+  "release_manager": ["product_manager", "devops_engineer", "cloud_engineer"],
+  "frontend_developer": ["fullstack_developer", "mobile_developer"],
+  "backend_developer": ["fullstack_developer", "crm_erp_developer"],
+  "fullstack_developer": [
+    "frontend_developer",
+    "backend_developer",
+    "mobile_developer",
+    "crm_erp_developer"
+  ],
+  "mobile_developer": ["frontend_developer", "fullstack_developer"],
+  "crm_erp_developer": ["backend_developer", "fullstack_developer"],
+  "qa_engineer": ["test_automation_engineer"],
+  "test_automation_engineer": ["qa_engineer"],
+  "devops_engineer": ["cloud_engineer", "security_engineer", "release_manager"],
+  "cloud_engineer": ["devops_engineer", "security_engineer", "release_manager"],
+  "security_engineer": ["devops_engineer", "cloud_engineer"],
+  "data_analyst": ["bi_developer", "data_scientist"],
+  "bi_developer": ["data_analyst", "data_engineer"],
+  "data_engineer": ["bi_developer", "data_scientist", "ai_engineer"],
+  "data_scientist": ["ai_engineer", "data_analyst", "data_engineer"],
+  "ai_engineer": ["data_scientist", "data_engineer"]
+}
