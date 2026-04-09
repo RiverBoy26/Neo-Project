@@ -235,3 +235,14 @@ label span {
     .hero-panel h1 { font-size: 1.6rem; }
     .main-content, .site-header, .site-footer { width: min(1240px, calc(100% - 24px)); }
 }
+
+
+.logout-form {
+    margin: 0;
+}
+
+.header-user-name {
+    font-weight: 600;
+    color: #2b2d42;
+    white-space: nowrap;
+}

@@ -9,11 +9,14 @@
     </article>
     <article class="card form-card">
         <h2>Редактирование профиля</h2>
-        <form class="form-grid">
-            <label><span>Имя</span><input type="text" value="{{ profile.name }}"></label>
-            <label><span>Email</span><input type="email" value="{{ profile.email }}"></label>
-            <label><span>Телефон</span><input type="text" value="{{ profile.phone }}"></label>
-            <button type="button" class="btn-primary">Сохранить</button>
+        <form class="form-grid" method="post" action="{% url 'app:profile' %}">
+            {% csrf_token %}
+            <label><span>Фамилия</span><input name="last_name" type="text" value="{{ profile.last_name }}"></label>
+            <label><span>Имя</span><input name="first_name" type="text" value="{{ profile.first_name }}"></label>
+            <label><span>Отчество</span><input name="middle_name" type="text" value="{{ profile.middle_name }}"></label>
+            <label><span>Email</span><input name="email" type="email" value="{{ profile.email }}"></label>
+            <label><span>Телефон</span><input name="phone" type="text" value="{{ profile.phone }}"></label>
+            <button type="submit" class="btn-primary">Сохранить</button>
         </form>
     </article>
 </section>

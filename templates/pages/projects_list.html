@@ -7,8 +7,10 @@
         <h2>{{ project.name }}</h2>
         <p><strong>Менеджер:</strong> {{ project.manager }}</p>
         <p><strong>Сроки:</strong> {{ project.dates }}</p>
-        <a class="btn-secondary" href="{% url 'app:project_detail' forloop.counter %}">Подробнее</a>
+        <a class="btn-secondary" href="{% url 'app:project_detail' project.id %}">Подробнее</a>
     </article>
+    {% empty %}
+    <article class="card project-card"><p>Проектов пока нет.</p></article>
     {% endfor %}
 </section>
 {% endblock %}

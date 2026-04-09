@@ -25,6 +25,18 @@
                 <a href="{% url 'app:analytics' %}">Аналитика</a>
                 <a href="{% url 'app:profile' %}">Профиль</a>
             </nav>
+            <div class="header-actions">
+                {% if current_user %}
+                    <span class="header-user-name">{{ current_user.last_name }} {{ current_user.first_name }}</span>
+                    <form method="post" action="{% url 'app:logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'app:login' %}" class="btn-secondary">Вход</a>
+                    <a href="{% url 'app:register' %}" class="btn-primary">Регистрация</a>
+                {% endif %}
+            </div>
         </header>
 
         <main class="main-content">
@@ -37,12 +49,21 @@
                 <div class="hero-glow"></div>
             </section>
 
+            {% if messages %}
+            <section class="messages-stack">
+                {% for message in messages %}
+                <div class="message {{ message.tags|default:'info' }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
             {% block content %}{% endblock %}
         </main>
 
         <footer class="site-footer">
             <div class="footer-links">
                 <a href="{% url 'app:login' %}">Вход</a>
+                <a href="{% url 'app:register' %}">Регистрация</a>
                 <a href="{% url 'app:projects_list' %}">Проекты</a>
                 <a href="{% url 'app:feedback' %}">Отзывы</a>
             </div>

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card form-card">
+    <h2>Регистрация пользователя</h2>
+    <form class="form-grid two-col-form" method="post" action="{% url 'app:register' %}">
+        {% csrf_token %}
+        <label><span>Фамилия</span><input name="last_name" type="text" required></label>
+        <label><span>Имя</span><input name="first_name" type="text" required></label>
+        <label><span>Отчество</span><input name="middle_name" type="text"></label>
+        <label><span>Email</span><input name="email" type="email" required></label>
+        <label><span>Телефон</span><input name="phone" type="text" required></label>
+        <label><span>Роль</span>
+            <select name="role">
+                {% for value, label in roles %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label><span>Профессия специалиста</span>
+            <select name="profession">
+                {% for value, label in professions %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label><span>Уровень</span>
+            <select name="level">
+                {% for value, label in levels %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="full-width"><span>Опыт, лет</span><input name="experience_years" type="number" min="0" value="0"></label>
+        <div class="full-width action-row">
+            <button type="submit" class="btn-primary">Зарегистрироваться</button>
+            <a href="{% url 'app:login' %}" class="btn-secondary">Уже есть аккаунт</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

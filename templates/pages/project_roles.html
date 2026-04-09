@@ -1,14 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="card form-card">
-    <h2>Добавить роль</h2>
-    <form class="form-grid two-col-form">
-        <label><span>Роль</span><input type="text" placeholder="Frontend Developer"></label>
-        <label><span>Количество специалистов</span><input type="number" value="1"></label>
-        <label class="full-width"><span>Обязательные навыки</span><input type="text" placeholder="React, TypeScript, CSS"></label>
-        <label class="full-width"><span>Желательные навыки</span><input type="text" placeholder="Next.js, Figma"></label>
-        <div class="full-width"><button type="button" class="btn-primary">Добавить роль</button></div>
+    <h2>Добавить роль в проект {{ project.name }}</h2>
+    <form class="form-grid two-col-form" method="post" action="{% url 'app:project_roles' project.id %}">
+        {% csrf_token %}
+        <label><span>Роль</span>
+            <select name="profession">
+                {% for value, label in profession_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label><span>Количество специалистов</span><input name="specialists_count" type="number" value="1" min="1"></label>
+        <label><span>Минимальный уровень</span>
+            <select name="required_level">
+                {% for value, label in level_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label><span>Желаемый уровень</span>
+            <select name="desired_level">
+                <option value="">Не указан</option>
+                {% for value, label in level_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="full-width"><span>Обязательные навыки</span><input name="required_skills" type="text" placeholder="Python, Django, Docker"></label>
+        <label class="full-width"><span>Желательные навыки</span><input name="desired_skills" type="text" placeholder="C++, Docker"></label>
+        <div class="full-width"><button type="submit" class="btn-primary">Добавить роль</button></div>
     </form>
+    <p class="muted">Допустимые навыки: {% for value, label in skill_choices %}{{ value }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 </section>
 <section class="table-card card">
     <h2>Роли проекта</h2>
@@ -21,8 +44,10 @@
                 <td>{{ role.count }}</td>
                 <td>{{ role.must_have }}</td>
                 <td>{{ role.status }}</td>
-                <td><a href="{% url 'app:recommendations' forloop.counter %}">Подбор</a></td>
+                <td><a href="{% url 'app:recommendations' role.id %}">Подбор</a></td>
             </tr>
+            {% empty %}
+            <tr><td colspan="5">Роли ещё не добавлены.</td></tr>
             {% endfor %}
         </tbody>
     </table>

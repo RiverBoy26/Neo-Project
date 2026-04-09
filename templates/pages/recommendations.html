@@ -3,14 +3,20 @@
 <section class="content-grid three-columns compact-gap">
     {% for item in recommendations %}
     <article class="card recommendation-card">
-        <span class="score-pill"> Занят до {{ item.end_date }}</span>
+        <span class="score-pill">{{ item.score }} · занятость: {{ item.end_date }}</span>
         <h2>{{ item.name }}</h2>
         <p>{{ item.reason }}</p>
         <div class="action-row stacked-actions">
-            <button class="btn-primary" type="button">Назначить</button>
-            <button class="btn-secondary" type="button">Подробнее</button>
+            <form method="post" action="{% url 'app:recommendations' role_id %}">
+                {% csrf_token %}
+                <input type="hidden" name="specialist_id" value="{{ item.id }}">
+                <button class="btn-primary" type="submit">Назначить</button>
+            </form>
+            <a class="btn-secondary" href="{% url 'app:specialist_detail' item.id %}">Подробнее</a>
         </div>
     </article>
+    {% empty %}
+    <article class="card recommendation-card"><p>Подходящих специалистов пока нет.</p></article>
     {% endfor %}
 </section>
 {% endblock %}

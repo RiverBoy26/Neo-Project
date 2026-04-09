@@ -3,17 +3,18 @@
 <section class="grid-one login-shell">
     <div class="card form-card narrow-card">
         <h2>Авторизация</h2>
-        <form class="form-grid">
-            <label><span>Email</span><input type="email" placeholder="manager@company.ru"></label>
-            <label><span>Пароль</span><input type="password" placeholder="••••••••"></label>
+        <form class="form-grid" method="post" action="{% url 'app:login' %}">
+            {% csrf_token %}
+            <label><span>Email</span><input name="email" type="email" placeholder="manager@company.ru" required></label>
             <label><span>Роль</span>
-                <select>
-                    <option>Менеджер</option>
-                    <option>Администратор</option>
-                    <option>Специалист</option>
+                <select name="role">
+                    {% for value, label in roles %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
                 </select>
             </label>
-            <button type="button" class="btn-primary">Войти</button>
+            <button type="submit" class="btn-primary">Войти</button>
+            <a href="{% url 'app:register' %}" class="btn-secondary">Создать аккаунт</a>
         </form>
     </div>
 </section>
