@@ -33,8 +33,10 @@
                         <button type="submit" class="btn-secondary">Выйти</button>
                     </form>
                 {% else %}
+                <nav class="login-nav">
                     <a href="{% url 'app:login' %}" class="btn-secondary">Вход</a>
                     <a href="{% url 'app:register' %}" class="btn-primary">Регистрация</a>
+                </nav>
                 {% endif %}
             </div>
         </header>

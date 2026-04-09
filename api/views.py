@@ -20,6 +20,7 @@ from db.models import (
     SpecialistProfile,
     User,
     UserSkill,
+    QualityLevel
 )
 
 
@@ -28,6 +29,14 @@ ROLE_LABELS = {
     Role.PROJECT_MANAGER: "Менеджер проекта",
     Role.SPECIALIST: "Специалист",
     Role.CUSTOMER: "Заказчик",
+}
+
+QUALITY_LEVEL = {
+    QualityLevel.AWFUL: 1,
+    QualityLevel.BAD: 2,
+    QualityLevel.NORMAL: 3,
+    QualityLevel.GOOD: 4,
+    QualityLevel.EXCELLENT: 5
 }
 
 STATUS_FORM_TO_MODEL = {
@@ -581,9 +590,10 @@ def feedback_view(request):
 
 def analytics_view(request):
     metrics = [
-        {"label": "Среднее время закрытия роли", "value": f"{ProjectRequirement.objects.count()} требований"},
-        {"label": "Процент успешных назначений", "value": f"{ProjectAssignment.objects.filter(status__in=[AssignmentStatus.ACCEPTED, AssignmentStatus.WORKING]).count()} шт."},
-        {"label": "Средняя оценка клиентов", "value": f"{Feedback.objects.count()} отзывов"},
+        {"label": "Количество проектов", "value": f"{Project.objects.count()}"},
+        {"label": "Процент успешных назначений", "value": f"{(int) (100 * ProjectAssignment.objects.filter(status__in=[AssignmentStatus.ACCEPTED, AssignmentStatus.WORKING]).count()
+                                                             / ProjectAssignment.objects.count())} %"},
+        {"label": "Средняя оценка клиентов", "value": "Нет оценок" if Report.objects.count() == 0 else f"{(int)(sum(QUALITY_LEVEL[report.quality()] for report in Report.objects.all())) / Report.objects.count()} %"},
         {"label": "Отчеты", "value": f"{Report.objects.count()} шт."},
     ]
     return _page(request, "pages/analytics.html", "Аналитика и отчёты", "Сводные отчёты и метрики по системе.", metrics=metrics)

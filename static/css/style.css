@@ -69,6 +69,17 @@ a:hover { opacity: 0.85; }
     font-weight: 600;
 }
 
+.login-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.login-nav a {
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
 .main-content { flex: 1; padding-bottom: 48px; }
 
 .hero-panel {
