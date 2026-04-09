@@ -8,15 +8,23 @@
         <p><strong>Автор:</strong> {{ item.author }}</p>
         <p>{{ item.comment }}</p>
     </article>
+    {% empty %}
+    <article class="card"><p>Отзывов пока нет.</p></article>
     {% endfor %}
 </section>
 <section class="card form-card">
     <h2>Добавить отзыв</h2>
-    <form class="form-grid two-col-form">
-        <label><span>О ком отзыв</span><input type="text"></label>
-        <label><span>Оценка</span><select><option>5</option></select></label>
-        <label class="full-width"><span>Комментарий</span><textarea rows="4"></textarea></label>
-        <div class="full-width"><button type="button" class="btn-primary">Сохранить отзыв</button></div>
+    <form class="form-grid two-col-form" method="post" action="{% url 'app:feedback' %}">
+        {% csrf_token %}
+        <label><span>Проект</span>
+            <select name="project_id">
+                {% for project in projects %}
+                <option value="{{ project.id }}">{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="full-width"><span>Комментарий</span><textarea name="text" rows="4"></textarea></label>
+        <div class="full-width"><button type="submit" class="btn-primary">Сохранить отзыв</button></div>
     </form>
 </section>
 {% endblock %}

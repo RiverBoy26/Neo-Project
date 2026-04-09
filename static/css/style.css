@@ -69,6 +69,17 @@ a:hover { opacity: 0.85; }
     font-weight: 600;
 }
 
+.login-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.login-nav a {
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
 .main-content { flex: 1; padding-bottom: 48px; }
 
 .hero-panel {
@@ -234,4 +245,15 @@ label span {
     .hero-panel { padding: 24px; }
     .hero-panel h1 { font-size: 1.6rem; }
     .main-content, .site-header, .site-footer { width: min(1240px, calc(100% - 24px)); }
+}
+
+
+.logout-form {
+    margin: 0;
+}
+
+.header-user-name {
+    font-weight: 600;
+    color: #2b2d42;
+    white-space: nowrap;
 }

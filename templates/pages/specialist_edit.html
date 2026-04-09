@@ -2,18 +2,33 @@
 {% block content %}
 <section class="card form-card">
     <h2>Форма редактирования специалиста</h2>
-    <form class="form-grid two-col-form">
-        <label><span>ФИО</span><input type="text" value="Анна Смирнова"></label>
-        <label><span>Роль</span><select><option>Frontend Developer</option></select></label>
-        <label><span>Уровень</span><select><option>Middle+</option></select></label>
-        <label><span>Опыт, лет</span><input type="number" value="4"></label>
-        <label class="full-width"><span>Навыки</span><input type="text" value="React, TypeScript, CSS, Figma"></label>
-        <label><span>Доступен с</span><input type="date"></label>
-        <label><span>Макс. загрузка, %</span><input type="number" value="100"></label>
-        <label class="full-width"><span>Предпочтения</span><textarea rows="4">Frontend, продуктовые команды, удалёнка</textarea></label>
+    <form class="form-grid two-col-form" method="post" action="{% url 'app:specialist_edit' specialist.id %}">
+        {% csrf_token %}
+        <label><span>Фамилия</span><input name="last_name" type="text" value="{{ specialist.last_name }}"></label>
+        <label><span>Имя</span><input name="first_name" type="text" value="{{ specialist.first_name }}"></label>
+        <label><span>Отчество</span><input name="middle_name" type="text" value="{{ specialist.middle_name }}"></label>
+        <label><span>Email</span><input name="email" type="email" value="{{ specialist.email }}"></label>
+        <label><span>Телефон</span><input name="phone" type="text" value="{{ specialist.phone }}"></label>
+        <label><span>Роль</span>
+            <select name="profession">
+                {% for value, label in profession_choices %}
+                <option value="{{ value }}" {% if specialist.role == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label><span>Уровень</span>
+            <select name="level">
+                {% for value, label in level_choices %}
+                <option value="{{ value }}" {% if specialist.seniority == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label><span>Опыт, лет</span><input name="experience_years" type="number" value="{{ specialist.experience }}"></label>
+        <label class="full-width"><span>Навыки</span><input name="skills" type="text" value="{{ specialist.skills }}"></label>
+        <label><span>Доступен с</span><input name="busy_until" type="date" value="{{ specialist.busy_until }}"></label>
         <div class="full-width action-row">
-            <button type="button" class="btn-primary">Сохранить</button>
-            <button type="button" class="btn-secondary">Отмена</button>
+            <button type="submit" class="btn-primary">Сохранить</button>
+            <a href="{% url 'app:specialist_detail' specialist.id %}" class="btn-secondary">Отмена</a>
         </div>
     </form>
 </section>
