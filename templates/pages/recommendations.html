@@ -3,7 +3,7 @@
 <section class="content-grid three-columns compact-gap">
     {% for item in recommendations %}
     <article class="card recommendation-card">
-        <span class="score-pill">{{ item.score }}</span>
+        <span class="score-pill"> Занят до {{ item.end_date }}</span>
         <h2>{{ item.name }}</h2>
         <p>{{ item.reason }}</p>
         <div class="action-row stacked-actions">

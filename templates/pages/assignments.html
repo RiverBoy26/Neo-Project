@@ -3,7 +3,7 @@
 <section class="table-card card">
     <h2>Назначения</h2>
     <table>
-        <thead><tr><th>Специалист</th><th>Проект</th><th>Роль</th><th>Статус</th><th>Загрузка</th></tr></thead>
+        <thead><tr><th>Специалист</th><th>Проект</th><th>Роль</th><th>Статус</th></tr></thead>
         <tbody>
             {% for item in assignments %}
             <tr>
@@ -11,7 +11,6 @@
                 <td>{{ item.project }}</td>
                 <td>{{ item.role }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.load }}</td>
             </tr>
             {% endfor %}
         </tbody>
