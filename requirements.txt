@@ -10,3 +10,4 @@ pytest==9.0.3
 pytest-django==4.12.0
 sqlparse==0.5.5
 tzdata==2026.1
+dotenv==0.9.9

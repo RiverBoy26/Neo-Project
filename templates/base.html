@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | Neo Project</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <div class="brand-block">
+                <div class="brand-mark"></div>
+                <div>
+                    <a href="{% url 'app:dashboard' %}" class="brand-title">Neo Project</a>
+                    <p class="brand-subtitle">Управление распределением специалистов</p>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <a href="{% url 'app:dashboard' %}">Дашборд</a>
+                <a href="{% url 'app:specialists_list' %}">Специалисты</a>
+                <a href="{% url 'app:projects_list' %}">Проекты</a>
+                <a href="{% url 'app:assignments' %}">Назначения</a>
+                <a href="{% url 'app:analytics' %}">Аналитика</a>
+                <a href="{% url 'app:profile' %}">Профиль</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <section class="hero-panel">
+                <div>
+                    <span class="eyebrow">NEOFLEX-LIKE CORPORATE UI</span>
+                    <h1>{{ page_title }}</h1>
+                    <p>{{ page_description }}</p>
+                </div>
+                <div class="hero-glow"></div>
+            </section>
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-links">
+                <a href="{% url 'app:login' %}">Вход</a>
+                <a href="{% url 'app:projects_list' %}">Проекты</a>
+                <a href="{% url 'app:feedback' %}">Отзывы</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

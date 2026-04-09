@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="grid-one login-shell">
+    <div class="card form-card narrow-card">
+        <h2>Авторизация</h2>
+        <form class="form-grid">
+            <label><span>Email</span><input type="email" placeholder="manager@company.ru"></label>
+            <label><span>Пароль</span><input type="password" placeholder="••••••••"></label>
+            <label><span>Роль</span>
+                <select>
+                    <option>Менеджер</option>
+                    <option>Администратор</option>
+                    <option>Специалист</option>
+                </select>
+            </label>
+            <button type="button" class="btn-primary">Войти</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

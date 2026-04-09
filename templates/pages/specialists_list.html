@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card filter-card">
+    <div class="toolbar">
+        <input type="text" placeholder="Поиск по имени или навыку">
+        <select><option>Все квалификации</option></select>
+        <select><option>Любая загрузка</option></select>
+        <button class="btn-primary">Найти</button>
+    </div>
+</section>
+<section class="table-card card">
+    <h2>Список специалистов</h2>
+    <table>
+        <thead><tr><th>Имя</th><th>Роль</th><th>Стек</th><th>Загрузка</th><th></th></tr></thead>
+        <tbody>
+            {% for specialist in specialists %}
+            <tr>
+                <td>{{ specialist.name }}</td>
+                <td>{{ specialist.role }}</td>
+                <td>{{ specialist.stack }}</td>
+                <td>{{ specialist.load }}</td>
+                <td><a href="{% url 'app:specialist_detail' forloop.counter %}">Открыть</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

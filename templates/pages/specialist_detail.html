@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content-grid two-columns">
+    <article class="card">
+        <h2>{{ specialist.name }}</h2>
+        <p><strong>Роль:</strong> {{ specialist.role }}</p>
+        <p><strong>Уровень:</strong> {{ specialist.seniority }}</p>
+        <p><strong>Опыт:</strong> {{ specialist.experience }}</p>
+        <p><strong>Текущая загрузка:</strong> {{ specialist.load }}</p>
+        <a class="btn-primary" href="{% url 'app:specialist_edit' specialist.id %}">Редактировать</a>
+    </article>
+    <article class="card">
+        <h2>Навыки</h2>
+        <div class="chips">
+            {% for skill in specialist.skills %}<span class="chip">{{ skill }}</span>{% endfor %}
+        </div>
+        <h3>История проектов</h3>
+        <ul class="clean-list">
+            {% for project in specialist.projects %}<li>{{ project }}</li>{% endfor %}
+        </ul>
+    </article>
+</section>
+{% endblock %}
