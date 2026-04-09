@@ -15,9 +15,23 @@ class Role(models.TextChoices):
 
 
 class Profession(models.TextChoices):
-    FRONTEND = "frontend", "frontend"
-    BACKEND = "backend", "backend"
-    QA = "qa", "qa"
+    PRODUCT_MANAGER = "product_manager", "Product Manager"
+    FRONTEND_DEVELOPER = "frontend_developer", "Frontend Developer"
+    BACKEND_DEVELOPER = "backend_developer", "Backend Developer"
+    FULLSTACK_DEVELOPER = "fullstack_developer", "Full-stack Developer"
+    MOBILE_DEVELOPER = "mobile_developer", "Mobile Developer"
+    CRM_ERP_DEVELOPER = "crm_erp_developer", "CRM / ERP Developer"
+    QA_ENGINEER = "qa_engineer", "QA Engineer"
+    TEST_AUTOMATION_ENGINEER = "test_automation_engineer", "Test Automation Engineer"
+    DEVOPS_ENGINEER = "devops_engineer", "DevOps Engineer"
+    AI_ENGINEER = "ai_engineer", "AI Engineer"
+    DATA_ANALYST = "data_analyst", "Data Analyst"
+    BI_DEVELOPER = "bi_developer", "BI Developer"
+    DATA_ENGINEER = "data_engineer", "Data Engineer"
+    DATA_SCIENTIST = "data_scientist", "Data Scientist"
+    SECURITY_ENGINEER = "security_engineer", "Security Engineer"
+    CLOUD_ENGINEER = "cloud_engineer", "Cloud Engineer"
+    RELEASE_MANAGER = "release_manager", "Release Manager"
 
 
 class Level(models.TextChoices):
@@ -27,10 +41,33 @@ class Level(models.TextChoices):
 
 
 class Skill(models.TextChoices):
-    PYTHON = "Python", "Python"
-    DJANGO = "Django", "Django"
-    DOCKER = "Docker", "Docker"
-    CPP = "C++", "C++"
+    TYPESCRIPT = "typescript", "TypeScript"
+    JAVASCRIPT = "javascript", "JavaScript"
+    PYTHON = "python", "Python"
+    SQL = "sql", "SQL"
+    GO = "go", "Go"
+    JAVA = "java", "Java"
+    CSHARP = "csharp", "C#"
+    RUST = "rust", "Rust"
+    BASH_SHELL = "bash_shell", "Bash / Shell"
+    HTML_CSS = "html_css", "HTML / CSS"
+    PHP = "php", "PHP"
+    KOTLIN = "kotlin", "Kotlin"
+    SWIFT = "swift", "Swift"
+    CPP = "cpp", "C++"
+    NODE_JS = "node_js", "Node.js"
+    REACT = "react", "React"
+    VUE_JS = "vue_js", "Vue.js"
+    VITE = "vite", "Vite"
+    FLUTTER = "flutter", "Flutter"
+    GRPC = "grpc", "gRPC"
+    SQLALCHEMY = "sqlalchemy", "SQLAlchemy"
+    MONGODB = "mongodb", "MongoDB"
+    CLICKHOUSE = "clickhouse", "ClickHouse"
+    KAFKA = "kafka", "Kafka"
+    POSTGRESQL = "postgresql", "PostgreSQL"
+    MYSQL = "mysql", "MySQL"
+    DOCKER = "docker", "Docker"
 
 
 class ProjectStatus(models.TextChoices):
