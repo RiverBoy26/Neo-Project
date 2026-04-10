@@ -11,7 +11,44 @@
 <section class="content-grid two-columns">
     <article class="card">
         <h2>Сводка по системе</h2>
-        <p>Здесь могут быть графики по загрузке, среднему времени закрытия ролей и качеству выполнения проектов.</p>
+        <p>Здесь представлены графики по загрузке, среднему времени закрытия ролей и качеству выполнения проектов.</p>
+        <div style="width: 420px; height: 420px;">
+    <canvas id="successPieChart"></canvas>
+</div>
+
+<p><strong>Процент свободных специалистов:</strong> {{ success_percent }}%</p>
+
+{{ pie_labels|json_script:"pie-labels" }}
+{{ pie_values|json_script:"pie-values" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const labels = JSON.parse(document.getElementById("pie-labels").textContent);
+    const values = JSON.parse(document.getElementById("pie-values").textContent);
+    const canvas = document.getElementById("successPieChart");
+
+    new Chart(canvas.getContext("2d"), {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: ["#36A2EB", "#FF6384"]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "top"
+                }
+            }
+        }
+    });
+});
+</script>
     </article>
     <article class="card">
         <h2>Отчеты</h2>

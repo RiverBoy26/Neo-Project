@@ -2,6 +2,9 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse
+from django.db.models import Count
+import json
 
 from db.models import (
     AssignmentStatus,
@@ -638,15 +641,48 @@ def feedback_view(request):
 
 
 def analytics_view(request):
-    metrics = [
-        {"label": "Количество проектов", "value": f"{Project.objects.count()}"},
-        {"label": "Процент успешных назначений", "value": f"{(int) (100 * ProjectAssignment.objects.filter(status__in=[AssignmentStatus.ACCEPTED, AssignmentStatus.WORKING]).count()
-                                                             / ProjectAssignment.objects.count())} %"},
-        {"label": "Средняя оценка клиентов", "value": "Нет оценок" if Report.objects.count() == 0 else f"{(int)(sum(QUALITY_LEVEL[report.quality()] for report in Report.objects.all())) / Report.objects.count()} %"},
-        {"label": "Отчеты", "value": f"{Report.objects.count()} шт."},
-    ]
-    return _page(request, "pages/analytics.html", "Аналитика и отчёты", "Сводные отчёты и метрики по системе.", metrics=metrics)
+    total_projects = Project.objects.count()
+    total_reports = Report.objects.count()
+    total_specialists = SpecialistProfile.objects.count()
 
+    successful_specialists = SpecialistProfile.objects.filter(is_busy=False).count()
+    unsuccessful_specialists = max(0, total_specialists - successful_specialists)
+
+    success_percent = (
+        0 if total_specialists == 0
+        else int(100 * successful_specialists/ total_specialists)
+    )
+
+    avg_quality = (
+        "Нет оценок"
+        if total_reports == 0
+        else f"{int(sum(QUALITY_LEVEL[report.quality()] for report in Report.objects.all()) / total_reports)} %"
+    )
+
+    metrics = [
+        {"label": "Количество проектов", "value": f"{total_projects}"},
+        {"label": "Процент успешных назначений", "value": f"{success_percent} %"},
+        {"label": "Средняя оценка клиентов", "value": avg_quality},
+        {"label": "Отчеты", "value": f"{total_reports} шт."},
+    ]
+
+    pie_labels = ["Назначено", "Не назначено"]
+    pie_values = [successful_specialists, unsuccessful_specialists]
+
+    if total_specialists == 0:
+        pie_labels = ["Нет данных"]
+        pie_values = [1]
+
+    return _page(
+        request,
+        "pages/analytics.html",
+        "Аналитика и отчёты",
+        "Сводные отчёты и метрики по системе.",
+        metrics=metrics,
+        pie_labels=pie_labels,
+        pie_values=pie_values,
+        success_percent=success_percent,
+    )
 
 def profile_view(request):
     user = _current_user(request)
