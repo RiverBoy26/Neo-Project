@@ -208,7 +208,7 @@ def specialists_list_view(request):
                 "name": name,
                 "role": profile.profession,
                 "stack": ", ".join(skills) or "—",
-                "load": "100%" if profile.is_busy else "0%",
+                "load": f"Занят до {profile.busy_until}" if profile.is_busy else "Свободен",
             }
         )
 
