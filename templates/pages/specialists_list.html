@@ -1,17 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="card filter-card">
-    <div class="toolbar">
-        <input type="text" placeholder="Поиск по имени или навыку">
-        <select><option>Все квалификации</option></select>
-        <select><option>Любая загрузка</option></select>
-        <button class="btn-primary">Найти</button>
-    </div>
+    <form class="toolbar" method="get" action="{% url 'app:specialists_list' %}">
+        <input type="text" name="q" placeholder="Поиск по имени или навыку" value="{{ query }}">
+        <select name="profession">
+            <option value="">Все квалификации</option>
+            {% for value, label in profession_choices %}
+            <option value="{{ value }}" {% if selected_profession == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="load">
+            <option value="">Любая загрузка</option>
+            <option value="free" {% if selected_load == 'free' %}selected{% endif %}>Свободные</option>
+            <option value="busy" {% if selected_load == 'busy' %}selected{% endif %}>Занятые</option>
+        </select>
+        <button type="submit" class="btn-primary">Найти</button>
+    </form>
 </section>
 <section class="table-card card">
     <h2>Список специалистов</h2>
     <table>
-        <thead><tr><th>Имя</th><th>Роль</th><th>Стек</th><th>Загрузка</th><th></th></tr></thead>
+        <thead><tr><th>Имя</th><th>Роль</th><th>Стек</th><th>Занятость</th><th></th></tr></thead>
         <tbody>
             {% for specialist in specialists %}
             <tr>
@@ -19,8 +28,10 @@
                 <td>{{ specialist.role }}</td>
                 <td>{{ specialist.stack }}</td>
                 <td>{{ specialist.load }}</td>
-                <td><a href="{% url 'app:specialist_detail' forloop.counter %}">Открыть</a></td>
+                <td><a href="{% url 'app:specialist_detail' specialist.id %}">Открыть</a></td>
             </tr>
+            {% empty %}
+            <tr><td colspan="5">Специалисты не найдены.</td></tr>
             {% endfor %}
         </tbody>
     </table>

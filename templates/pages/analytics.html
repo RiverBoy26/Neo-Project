@@ -8,18 +8,227 @@
     </article>
     {% endfor %}
 </section>
-<section class="content-grid two-columns">
+
+<section class="content-grid two-columns analytics-layout">
     <article class="card">
         <h2>Сводка по системе</h2>
-        <p>Здесь могут быть графики по загрузке, среднему времени закрытия ролей и качеству выполнения проектов.</p>
+        <p>Здесь представлены графики по загрузке, среднему времени закрытия ролей и качеству выполнения проектов.</p>
+
+        <div class="analytics-chart-box">
+            <canvas id="successPieChart"></canvas>
+        </div>
+
+        <p><strong>Процент свободных специалистов:</strong> {{ success_percent }}%</p>
+
+        {{ pie_labels|json_script:"pie-labels" }}
+        {{ pie_values|json_script:"pie-values" }}
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const labels = JSON.parse(document.getElementById("pie-labels").textContent);
+            const values = JSON.parse(document.getElementById("pie-values").textContent);
+            const canvas = document.getElementById("successPieChart");
+
+            new Chart(canvas.getContext("2d"), {
+                type: "pie",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: ["#36A2EB", "#FF6384"]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "top"
+                        }
+                    }
+                }
+            });
+        });
+        </script>
     </article>
-    <article class="card">
+
+    <article class="card reports-card">
         <h2>Отчеты</h2>
-        <ul class="clean-list">
-            <li>Отчет по проекту</li>
-            <li>Отчет по специалистам</li>
-            <li>Отчет по качеству и фидбеку</li>
-        </ul>
+
+        <div class="reports-accordion">
+            <details class="report-group" open>
+                <summary class="report-group__summary">
+                    <span class="report-group__arrow"></span>
+                    <span class="report-group__title">Отчеты по проекту</span>
+                </summary>
+
+                <div class="report-group__content">
+                    <ul class="report-list">
+                        {% for project in project_report_items|slice:":5" %}
+                            <li class="report-row">
+                                <div class="report-row__meta">
+                                    <span class="report-row__name">{{ project.name }}</span>
+                                    <span class="report-row__description">
+                                        Менеджер: {{ project.manager.last_name }} {{ project.manager.first_name }} · Статус: {{ project.status }}
+                                    </span>
+                                </div>
+                                <a
+                                    href="{% url 'app:download_report' 'project' project.id %}"
+                                    class="btn-secondary report-download-btn"
+                                >
+                                    Скачать
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="report-row report-row--empty">Нет проектов для отображения</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if project_report_items|length > 5 %}
+                        <details class="report-more">
+                            <summary class="report-more__summary">Показать еще</summary>
+                            <ul class="report-list report-list--nested">
+                                {% for project in project_report_items|slice:"5:" %}
+                                    <li class="report-row">
+                                        <div class="report-row__meta">
+                                            <span class="report-row__name">{{ project.name }}</span>
+                                            <span class="report-row__description">
+                                                Менеджер: {{ project.manager.last_name }} {{ project.manager.first_name }} · Статус: {{ project.status }}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            class="btn-secondary report-download-btn"
+                                            data-report-type="project"
+                                            data-object-id="{{ project.id }}"
+                                        >
+                                            Скачать
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    {% endif %}
+                </div>
+            </details>
+
+            <details class="report-group">
+                <summary class="report-group__summary">
+                    <span class="report-group__arrow"></span>
+                    <span class="report-group__title">Отчеты по специалистам</span>
+                </summary>
+
+                <div class="report-group__content">
+                    <ul class="report-list">
+                        {% for specialist in specialist_report_items|slice:":5" %}
+                            <li class="report-row">
+                                <div class="report-row__meta">
+                                    <span class="report-row__name">
+                                        {{ specialist.user.last_name }} {{ specialist.user.first_name }}{% if specialist.user.middle_name %} {{ specialist.user.middle_name }}{% endif %}
+                                    </span>
+                                    <span class="report-row__description">
+                                        {{ specialist.profession }} · {{ specialist.level }}
+                                    </span>
+                                </div>
+                                <a
+                                    href="{% url 'app:download_report' 'specialist' specialist.user_id %}"
+                                    class="btn-secondary report-download-btn"
+                                >
+                                    Скачать
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="report-row report-row--empty">Нет специалистов для отображения</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if specialist_report_items|length > 5 %}
+                        <details class="report-more">
+                            <summary class="report-more__summary">Показать еще</summary>
+                            <ul class="report-list report-list--nested">
+                                {% for specialist in specialist_report_items|slice:"5:" %}
+                                    <li class="report-row">
+                                        <div class="report-row__meta">
+                                            <span class="report-row__name">
+                                                {{ specialist.user.last_name }} {{ specialist.user.first_name }}{% if specialist.user.middle_name %} {{ specialist.user.middle_name }}{% endif %}
+                                            </span>
+                                            <span class="report-row__description">
+                                                {{ specialist.profession }} · {{ specialist.level }}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            class="btn-secondary report-download-btn"
+                                            data-report-type="specialist"
+                                            data-object-id="{{ specialist.user_id }}"
+                                        >
+                                            Скачать
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    {% endif %}
+                </div>
+            </details>
+
+            <details class="report-group">
+                <summary class="report-group__summary">
+                    <span class="report-group__arrow"></span>
+                    <span class="report-group__title">Отчеты по качеству и фидбеку</span>
+                </summary>
+
+                <div class="report-group__content">
+                    <ul class="report-list">
+                        {% for project in quality_feedback_report_items|slice:":5" %}
+                            <li class="report-row">
+                                <div class="report-row__meta">
+                                    <span class="report-row__name">{{ project.name }}</span>
+                                    <span class="report-row__description">
+                                        Отчетов: {{ project.reports_count }} · Отзывов: {{ project.feedback_count }}
+                                    </span>
+                                </div>
+                                <a
+                                    href="{% url 'app:download_report' 'quality_feedback' project.id %}"
+                                    class="btn-secondary report-download-btn"
+                                >
+                                    Скачать
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="report-row report-row--empty">Нет данных по качеству и отзывам</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if quality_feedback_report_items|length > 5 %}
+                        <details class="report-more">
+                            <summary class="report-more__summary">Показать еще</summary>
+                            <ul class="report-list report-list--nested">
+                                {% for project in quality_feedback_report_items|slice:"5:" %}
+                                    <li class="report-row">
+                                        <div class="report-row__meta">
+                                            <span class="report-row__name">{{ project.name }}</span>
+                                            <span class="report-row__description">
+                                                Отчетов: {{ project.reports_count }} · Отзывов: {{ project.feedback_count }}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            class="btn-secondary report-download-btn"
+                                            data-report-type="quality_feedback"
+                                            data-object-id="{{ project.id }}"
+                                        >
+                                            Скачать
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    {% endif %}
+                </div>
+            </details>
+        </div>
     </article>
 </section>
 {% endblock %}
