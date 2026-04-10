@@ -60,4 +60,6 @@ urlpatterns = [
     path('api/analytics/dashboard', DashboardAnalyticsView.as_view(), name='api-analytics-dashboard'),
     path('api/analytics/projects/<int:pk>', ProjectAnalyticsView.as_view(), name='api-analytics-project-detail'),
     path('api/', include(router.urls)),
+
+    path("reports/download/<str:report_type>/<int:object_id>/", views.download_report_view, name="download_report")
 ]
