@@ -26,6 +26,13 @@ from db.models import (
     QualityLevel
 )
 
+from django.http import FileResponse, Http404
+from db.services.docx_reports import (
+    build_project_report_docx,
+    build_specialist_report_docx,
+    build_quality_feedback_report_docx,
+)
+
 from db.services.recommendations import recommend_specialists_for_requirement
 
 ROLE_LABELS = {
@@ -645,29 +652,65 @@ def analytics_view(request):
     total_reports = Report.objects.count()
     total_specialists = SpecialistProfile.objects.count()
 
-    successful_specialists = SpecialistProfile.objects.filter(is_busy=False).count()
-    unsuccessful_specialists = max(0, total_specialists - successful_specialists)
+    free_specialists = SpecialistProfile.objects.filter(is_busy=False).count()
+    busy_specialists = max(0, total_specialists - free_specialists)
 
     success_percent = (
         0 if total_specialists == 0
-        else int(100 * successful_specialists/ total_specialists)
+        else int(100 * free_specialists / total_specialists)
+    )
+
+    total_assignments = ProjectAssignment.objects.count()
+    successful_assignments = ProjectAssignment.objects.filter(
+        status__in=[
+            AssignmentStatus.ACCEPTED,
+            AssignmentStatus.WORKING,
+            AssignmentStatus.FINISHED,
+        ]
+    ).count()
+
+    assignment_success_percent = (
+        0 if total_assignments == 0
+        else int(100 * successful_assignments / total_assignments)
     )
 
     avg_quality = (
         "Нет оценок"
         if total_reports == 0
-        else f"{int(sum(QUALITY_LEVEL[report.quality()] for report in Report.objects.all()) / total_reports)} %"
+        else f"{round(sum(QUALITY_LEVEL[report.quality] for report in Report.objects.all()) / total_reports, 1)} / 5"
     )
+
+    project_report_items = Project.objects.select_related("manager").order_by("-id")
+
+    specialist_report_items = SpecialistProfile.objects.select_related("user").order_by(
+        "user__last_name",
+        "user__first_name",
+    )
+
+    quality_feedback_report_items = (
+        Project.objects.select_related("manager")
+        .annotate(
+            reports_count=Count("reports", distinct=True),
+            feedback_count=Count("feedbacks", distinct=True),
+        )
+        .order_by("-id")
+    )
+
+    quality_feedback_report_items = [
+        project
+        for project in quality_feedback_report_items
+        if project.reports_count > 0 or project.feedback_count > 0
+    ]
 
     metrics = [
         {"label": "Количество проектов", "value": f"{total_projects}"},
-        {"label": "Процент успешных назначений", "value": f"{success_percent} %"},
+        {"label": "Процент успешных назначений", "value": f"{assignment_success_percent} %"},
         {"label": "Средняя оценка клиентов", "value": avg_quality},
         {"label": "Отчеты", "value": f"{total_reports} шт."},
     ]
 
-    pie_labels = ["Назначено", "Не назначено"]
-    pie_values = [successful_specialists, unsuccessful_specialists]
+    pie_labels = ["Свободны", "Заняты"]
+    pie_values = [free_specialists, busy_specialists]
 
     if total_specialists == 0:
         pie_labels = ["Нет данных"]
@@ -682,6 +725,26 @@ def analytics_view(request):
         pie_labels=pie_labels,
         pie_values=pie_values,
         success_percent=success_percent,
+        project_report_items=project_report_items,
+        specialist_report_items=specialist_report_items,
+        quality_feedback_report_items=quality_feedback_report_items,
+    )
+
+def download_report_view(request, report_type, object_id):
+    if report_type == "project":
+        file_obj, filename = build_project_report_docx(object_id)
+    elif report_type == "specialist":
+        file_obj, filename = build_specialist_report_docx(object_id)
+    elif report_type == "quality_feedback":
+        file_obj, filename = build_quality_feedback_report_docx(object_id)
+    else:
+        raise Http404("Неизвестный тип отчета.")
+
+    return FileResponse(
+        file_obj,
+        as_attachment=True,
+        filename=filename,
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
 
 def profile_view(request):
